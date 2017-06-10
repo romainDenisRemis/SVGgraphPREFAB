@@ -25,7 +25,7 @@
  * @author Romain DENIS-REMIS <romain at denis-remis.fr>
  * @copyright (c) 2017, Romain DENIS-REMIS
  * @license http://www.gnu.org/licenses/ GNU Lesser General Public License 3
- * @version 0.1.0
+ * @version 0.2.0
  * @package SVGgraphPREFAB
  */
 
@@ -105,11 +105,51 @@ const TRADUCTION = array(
 	, 'Moyenne' => array('fr' => 'Moyenne', 'en' => 'Average', 'de' => 'Durchschnitt', 'es' => 'mediana')
 );
 
-
+/**
+ * Constante pour le style.
+ */
 const STYLE = array(
 	'bootstrap' => ''
 	, 'default' => 'SVGgraphPREFAB-'
 	, 'custom' => 'SVGgraphPREFAB_custom-'
+);
+
+/**
+ * Constante pour le style du bloc graphique.
+ */
+const BACK_STYLE_CHART = array(
+	'clear' => 'clear'
+	, 'dark' => 'dark'
+);
+
+/**
+ * Constante pour la couleur de texte foncée.
+ */
+const FONTDARK = 'rgb(10, 10, 10)';
+
+/**
+ * Constante pour la couleur de texte claire.
+ */
+const FONTCLEAR = 'rgb(250, 250, 250)';
+
+/**
+ * Constante pour la série de couleurs utilisées pour les graphiques.
+ */
+const COLORSET = array(
+	array('back' => 'rgb(122, 159, 192)', 'font' => FONTDARK)  //  1
+	, array('back' => 'rgb(209, 159, 100)', 'font' => FONTDARK)  //  2
+	, array('back' => 'rgb(101, 93, 91)', 'font' => FONTCLEAR) //  3
+	, array('back' => 'rgb(154, 155, 35)', 'font' => FONTDARK)  //  4
+	, array('back' => 'rgb(54, 59, 91)', 'font' => FONTCLEAR) //  5
+	, array('back' => 'rgb(64, 129, 97)', 'font' => FONTCLEAR)  //  6
+	, array('back' => 'rgb(253, 116, 0)', 'font' => FONTDARK)  //  7
+	, array('back' => 'rgb(190, 219, 57)', 'font' => FONTDARK)  //  8
+	, array('back' => 'rgb(0, 67, 88)', 'font' => FONTCLEAR) //  9
+	, array('back' => 'rgb(31, 138, 112)', 'font' => FONTCLEAR)  // 10
+	, array('back' => 'rgb(255, 225, 26)', 'font' => FONTDARK)  // 11
+	, array('back' => 'rgb(1, 114, 179)', 'font' => FONTCLEAR)  // 12
+	, array('back' => 'rgb(166, 55, 59)', 'font' => FONTCLEAR)  // 13
+	, array('back' => 'rgb(158, 116, 93)', 'font' => FONTCLEAR)  // 14
 );
 
 /**
@@ -177,13 +217,13 @@ class reglages_defaut {
 	 * @var reglages_defaut|NULL $instance
 	 */
 	private static $instance = NULL;
-	
+
 	/**
 	 * Préférence de localisation.
 	 * @var string $localisation one of the const **LANG_DISPO**  value
 	 */
 	private $localisation = '';
-	
+
 	/**
 	 * Préférence de style.
 	 * @var string $cssStyle 'bootstrap' | 'default' | 'custom'
@@ -191,13 +231,20 @@ class reglages_defaut {
 	private $cssStyle = '';
 
 	/**
+	 * Préférence de style pour le graphique.
+	 * @var string $chartBackStyle 'clear' | 'dark'
+	 */
+	private $chartBackStyle = '';
+	
+	/**
 	 * Constructeur.
 	 * Le tableau des paramètres par défaut est:
 	 * 
 	 * ```php
 	 * array(
-	 *		'localization' => ''	// one of the const LANG_DISPO value
-	 *		, 'css_style' => ''		// 'bootstrap' | 'default' | 'custom'
+	 * 		'localization' => ''		// one of the const LANG_DISPO value
+	 * 		, 'css_style' => ''			// 'bootstrap' | 'default' | 'custom'
+	 * 		, 'chart_back_style' => ''	// 'clear' | 'dark'
 	 * )
 	 * ```
 	 * 
@@ -206,11 +253,13 @@ class reglages_defaut {
 	private function __construct(array $param) {
 		$localization = '';
 		$css_style = '';
+		$chart_back_style = '';
 
 		extract($param, EXTR_IF_EXISTS);
-		
+
 		$this->localisation = $localization;
 		$this->cssStyle = $css_style;
+		$this->chartBackStyle = $chart_back_style;
 	}
 
 	/**
@@ -219,8 +268,9 @@ class reglages_defaut {
 	 * 
 	 * ```php
 	 * array(
-	 *		'localization' => ''	// one of the const LANG_DISPO value
-	 *		, 'css_style' => ''		// 'bootstrap' | 'default' | 'custom'
+	 * 		'localization' => ''		// one of the const LANG_DISPO value
+	 * 		, 'css_style' => ''			// 'bootstrap' | 'default' | 'custom'
+	 * 		, 'chart_back_style' => ''	// 'clear' | 'dark'
 	 * )
 	 * ```
 	 * 
@@ -248,6 +298,14 @@ class reglages_defaut {
 	 */
 	public function get_style() {
 		return $this->cssStyle;
+	}
+	
+	/**
+	 * Retourne la préférence de style pour le graphique.
+	 * @return string
+	 */
+	public function get_chart_back_style() {
+		return $this->chartBackStyle;
 	}
 
 }

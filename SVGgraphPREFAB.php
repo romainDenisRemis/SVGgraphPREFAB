@@ -30,7 +30,7 @@
  * @author Romain DENIS-REMIS <romain at denis-remis.fr>
  * @copyright (c) 2017, Romain DENIS-REMIS
  * @license http://www.gnu.org/licenses/ GNU Lesser General Public License 3
- * @version 0.1.0
+ * @version 0.2.0
  */
 
 /**
@@ -38,10 +38,19 @@
  */
 require_once(__DIR__ . '/SVGgraphPREFAB_graphBarres12m.php');
 
+require_once(__DIR__ . '/SVGgraphPREFAB_graphPie.php');
+
 /**
  * renomme SVGgraphPREFAB_graphBarres12m en SGP_gb12m utilisable dans le namespace global.
  */
 class SGP_gb12m extends \SVGgraphPREFAB\SVGgraphPREFAB_graphBarres12m {
+	
+}
+
+/**
+ * renomme SVGgraphPREFAB_graphPie en SGP_gpie utilisable dans le namespace global.
+ */
+class SGP_gpie extends \SVGgraphPREFAB\SVGgraphPREFAB_graphPie {
 	
 }
 

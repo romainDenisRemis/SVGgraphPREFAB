@@ -25,7 +25,7 @@
  * @author Romain DENIS-REMIS <romain at denis-remis.fr>
  * @copyright (c) 2017, Romain DENIS-REMIS
  * @license http://www.gnu.org/licenses/ GNU Lesser General Public License 3
- * @version 0.1.0
+ * @version 0.2.0
  * @package SVGgraphPREFAB
  */
 
@@ -107,6 +107,18 @@ class SVGgraphPREFAB_graphBarres12m {
 	private $styleCSSprefix;
 
 	/**
+	 * Style CSS utilisé pour le fond du graphique.
+	 * @var string $chartBackStyleCSSsuffix
+	 */
+	private $chartBackStyleCSSsuffix;
+
+	/**
+	 * Couleur utilisée pour le texte en fonction du style du fond du graphique.
+	 * @var string $chartBackStyleFontColor
+	 */
+	private $chartBackStyleFontColor;
+
+	/**
 	 * Tableau contenant tous les objets SVG du graphique en barres.
 	 * @var array $enfants_graph12m
 	 */
@@ -146,12 +158,6 @@ class SVGgraphPREFAB_graphBarres12m {
 	private $ordMaxCumul = 1;
 
 	/**
-	 * Tableau des couleurs utilisées pour les séries (barres et lignes)
-	 * @var array $couleurs
-	 */
-	private $couleurs = array('rgb(122, 159, 192)', 'rgb(209, 159, 100)', 'rgb(101, 93, 91)', 'rgb(154, 155, 35)', 'rgb(54, 59, 91)', 'rgb(64, 129, 97)');
-
-	/**
 	 * Variable interne.
 	 * Utilisée en interne pour l'utilisation de la fonction *cumulAdd* afin de garder temporairement le cumul des données.
 	 * 
@@ -171,6 +177,7 @@ class SVGgraphPREFAB_graphBarres12m {
 	 * 		, 'units' => '€'
 	 * 		, 'localization' => 'fr'
 	 * 		, 'css_style' => 'default'		// 'bootstrap' | 'default' | 'custom'
+	 * 		, 'chart_back_style' => 'clear'	// 'clear' | 'dark'
 	 * 		, 'graph_forced_height' => 0	// If you really want the SVG graph have a forced height (means ratio display is lost)
 	 * )
 	 * ```
@@ -182,6 +189,7 @@ class SVGgraphPREFAB_graphBarres12m {
 		$units = '€';
 		$localization = 'fr';
 		$css_style = 'default';
+		$chart_back_style = 'clear';
 		$graph_forced_height = 0;
 
 		extract($param, EXTR_IF_EXISTS);
@@ -193,6 +201,9 @@ class SVGgraphPREFAB_graphBarres12m {
 		if ($prefGlob->get_style()) {
 			$css_style = $prefGlob->get_style();
 		}
+		if ($prefGlob->get_chart_back_style()) {
+			$chart_back_style = $prefGlob->get_chart_back_style();
+		}
 
 		$this->titreGraph = strval($block_title);
 		$this->nomGraph = unique_id('sgp_gb12m');
@@ -203,15 +214,20 @@ class SVGgraphPREFAB_graphBarres12m {
 		$localization = strtolower(strval($localization));
 		$this->localisation = in_array($localization, LANG_DISPO) ? $localization : 'en';
 		$css_style = strval($css_style);
+		$chart_back_style = strval($chart_back_style);
 		$this->styleCSSprefix = array_key_exists($css_style, STYLE) ? STYLE[$css_style] : STYLE['default'];
+		$this->chartBackStyleCSSsuffix = array_key_exists($chart_back_style, BACK_STYLE_CHART) ? BACK_STYLE_CHART[$chart_back_style] : BACK_STYLE_CHART['clear'];
+		$this->chartBackStyleFontColor = $this->chartBackStyleCSSsuffix === 'clear' ? 'rgb(0,0,0)' : 'rgb(250,250,250)';
+
 		if (!is_array($data)) {
 			$data = array();
 		}
-
-		// TODO: Augmenter le tableau des couleurs afin de pouvoir gérer plus que 6 séries.
-		if (count($data) > 6) {
-			$data = array_slice($data, 0, 6);
+		
+		// la constante COLORSET ne possède que 14 couleurs, 
+		if (count($data) > 14) {
+			$data = array_slice($data, 0, 14);
 		}
+
 		foreach ($data as $unAn) {
 			if (is_array($unAn)) {
 				if (count($unAn) === 13) {
@@ -283,24 +299,23 @@ class SVGgraphPREFAB_graphBarres12m {
 	 * Fonction appelée dans la fonction *dessine* si la version normale est choisie.
 	 */
 	private function calcul() {
-		$largeurReduite = $this->width - 10;
+		$largeurReduite = $this->width - 30;
 		$hautZoneBarre = (int) ($this->height * 0.9);
 		$largZoneBarre = (int) ($largeurReduite / 13) * 12;
-		$largZoneordone = $largeurReduite - $largZoneBarre;
+		$largZoneOrdonnees = $largeurReduite - $largZoneBarre;
 		$ratio = ($hautZoneBarre / $this->ordMax);
 		$largZoneMois = (int) ($largZoneBarre / 12);
 		$largeurCol = (($largZoneBarre / 12) / ($this->nbSeries + 1));
 
-		// Ecriture des noms des 12 mois -----------------------------------------------
+		// Abscisse - Ecriture des noms des 12 mois -----------------------------------------------
 		for ($index = 1; $index <= 12; $index++) {
 			$fontSize = (int) ($largZoneBarre * 0.02);
-			$x = (int) $largZoneordone + (($index - 1) * ($this->nbSeries + 1) * $largeurCol) + ($largZoneMois / 2);
+			$x = (int) $largZoneOrdonnees + (($index - 1) * ($this->nbSeries + 1) * $largeurCol) + ($largZoneMois / 2);
 			$y = (int) $hautZoneBarre + $fontSize;
-			$this->enfants_graph12m[] = new b\bls_svg_text(MOIS_COURT[$index][$this->localisation], $x, $y, $fontSize, 'middle');
+			$this->enfants_graph12m[] = new b\bls_svg_text(MOIS_COURT[$index][$this->localisation], $x, $y, $fontSize, 'middle', $this->chartBackStyleFontColor);
 		}
 
-		// abscisses et ordonnées -------------------------------------------------------
-		// chiffres
+		// Ordonnées - calcul et Ecriture sur l'échelle des ordonnées ------------------------------
 		$fontSize = 15;
 		$ordonneeMax = reduction_dix($this->ordMax);
 
@@ -317,17 +332,18 @@ class SVGgraphPREFAB_graphBarres12m {
 		foreach ($ordTAB as $uneOrd) {
 			$nombreOrd = $uneOrd * (10 ** $ordonneeMax[1]);
 			$nombreOrdY = (int) ($nombreOrd * $ratio);
-			$this->enfants_graph12m[] = new b\bls_svg_text(currency_format($nombreOrd, 0, '', $this->localisation), $largZoneordone - 4, $hautZoneBarre - $nombreOrdY + 4, $fontSize, 'end');
-			$this->enfants_graph12m[] = new b\bls_svg_line($largZoneordone - 2, $hautZoneBarre - $nombreOrdY, $largeurReduite, $hautZoneBarre - $nombreOrdY, 'rgb(150,150,150)', 1, 'butt');
+			$this->enfants_graph12m[] = new b\bls_svg_text(currency_format($nombreOrd, 0, '', $this->localisation), $largZoneOrdonnees - 4, $hautZoneBarre - $nombreOrdY + 4, $fontSize, 'end', $this->chartBackStyleFontColor);
+			$this->enfants_graph12m[] = new b\bls_svg_line($largZoneOrdonnees - 2, $hautZoneBarre - $nombreOrdY, $largeurReduite, $hautZoneBarre - $nombreOrdY, 'rgb(150,150,150)', 1, 'butt');
 		}
-
-		$this->enfants_graph12m[] = new b\bls_svg_text(currency_format(0, 0, '', $this->localisation), $largZoneordone - 4, $hautZoneBarre + 4, $fontSize, 'end');
+		// le zéro
+		$this->enfants_graph12m[] = new b\bls_svg_text(currency_format(0, 0, '', $this->localisation), $largZoneOrdonnees - 4, $hautZoneBarre + 4, $fontSize, 'end', $this->chartBackStyleFontColor);
 
 		// Création des barres mensuelles de données
 		foreach ($this->donnees as $cle => $uneAnnee) {
-			$couleur = $this->couleurs[$cle];
+			$couleur = COLORSET[$cle]['back'];
+			$couleurFont = COLORSET[$cle]['font'];
 			for ($index = 1; $index <= 12; $index++) {
-				$x = $largZoneordone + ($largeurCol * $index) + ($cle * $largeurCol) + (($index - 1) * $this->nbSeries * $largeurCol);
+				$x = $largZoneOrdonnees + ($largeurCol * $index) + ($cle * $largeurCol) + (($index - 1) * $this->nbSeries * $largeurCol);
 				$height = (int) ($uneAnnee['mois'][$index] * $ratio);
 				$y = $hautZoneBarre - $height;
 				// calcul pour la gestion de la position de l'étiquette d'affichage de la valeur de la barre
@@ -337,7 +353,7 @@ class SVGgraphPREFAB_graphBarres12m {
 				$yTooltipBox = $yTooltip - 15 + 2;
 				$nombreTooltip = currency_format($uneAnnee['mois'][$index], 0, '', $this->localisation);
 				$codeJSpourCacherTooltip = "SGP_gb12m_HideTooltip('{$this->nomGraph}');";
-				$codeJSpourAfficherTooltip = "SGP_gb12m_showTooltip({$xTooltip}, {$yTooltip}, '{$nombreTooltip}', '{$couleur}', {$xTooltipBox}, {$yTooltipBox}, '{$this->nomGraph}');";
+				$codeJSpourAfficherTooltip = "SGP_gb12m_showTooltip({$xTooltip}, {$yTooltip}, '{$nombreTooltip}', '{$couleurFont}', '{$couleur}', {$xTooltipBox}, {$yTooltipBox}, '{$this->nomGraph}');";
 				// TODO: Voir ici et dans le fichier .js pour gérer le Show et Hide du Tooltip lors d'un clic sur une barre (Pour les tablette et smartPhone)), il faudra sans doute ajouter un ID à chaque barre.
 				// $codeJSpourClicTooltip = "graphSVG_ClicTooltip(evt, {$xTooltip}, {$yTooltip}, '{$nombreTooltip}', '{$couleur}', {$xTooltipBox}, {$yTooltipBox}, '{$this->nomGraph}');";
 				$attrSup = array('onmouseout' => $codeJSpourCacherTooltip, 'onmouseover' => $codeJSpourAfficherTooltip);
@@ -347,9 +363,9 @@ class SVGgraphPREFAB_graphBarres12m {
 
 		// abscisses et ordonnées -------------------------------------------------------
 		// barres des ordonnées
-		$this->enfants_graph12m[] = new b\bls_svg_line($largZoneordone, 0, $largZoneordone, $this->height, 'rgb(0,0,0)', 1, 'butt');
+		$this->enfants_graph12m[] = new b\bls_svg_line($largZoneOrdonnees, 0, $largZoneOrdonnees, $hautZoneBarre, $this->chartBackStyleFontColor, 1, 'butt');
 		// barres des abscisses
-		$this->enfants_graph12m[] = new b\bls_svg_line($largZoneordone - 2, $hautZoneBarre, $largeurReduite, $hautZoneBarre, 'rgb(0,0,0)', 1, 'butt');
+		$this->enfants_graph12m[] = new b\bls_svg_line($largZoneOrdonnees - 2, $hautZoneBarre, $largeurReduite, $hautZoneBarre, $this->chartBackStyleFontColor, 1, 'butt');
 
 		// Cadre et texte servant à afficher la valeur lorsque une barre est survolée par la souris
 		$this->enfants_graph12m[] = new b\bls_svg_rect(0, 0, $largZoneMois, 15, 'rgb(250,250,250)', array('visibility' => 'hidden', 'id' => 'tooltipbox' . $this->nomGraph));
@@ -361,10 +377,10 @@ class SVGgraphPREFAB_graphBarres12m {
 	 * Fonction appelée dans la fonction *dessine* si la version cumulée est choisie.
 	 */
 	private function calculcumule() {
-		$largeurReduite = $this->width - 10;
+		$largeurReduite = $this->width - 30;
 		$hautZoneBarre = (int) ($this->height * 0.9);
 		$largZoneBarre = (int) ($largeurReduite / 13) * 12;
-		$largZoneordone = $largeurReduite - $largZoneBarre;
+		$largZoneOrdonnees = $largeurReduite - $largZoneBarre;
 		$ratio = ($hautZoneBarre / $this->ordMaxCumul);
 		$largZoneMois = (int) ($largZoneBarre / 12);
 		$largeurCol = (($largZoneBarre / 12) / ($this->nbSeries + 1));
@@ -372,9 +388,9 @@ class SVGgraphPREFAB_graphBarres12m {
 		// Ecriture des noms des 12 mois -----------------------------------------------
 		for ($index = 1; $index <= 12; $index++) {
 			$fontSize = (int) ($largZoneBarre * 0.02);
-			$x = (int) $largZoneordone + (($index - 1) * ($this->nbSeries + 1) * $largeurCol) + ($largZoneMois / 2);
+			$x = (int) $largZoneOrdonnees + (($index - 1) * ($this->nbSeries + 1) * $largeurCol) + ($largZoneMois / 2);
 			$y = (int) $hautZoneBarre + $fontSize;
-			$this->enfants_graph12m_cumul[] = new b\bls_svg_text(MOIS_COURT[$index][$this->localisation], $x, $y, $fontSize, 'middle');
+			$this->enfants_graph12m_cumul[] = new b\bls_svg_text(MOIS_COURT[$index][$this->localisation], $x, $y, $fontSize, 'middle', $this->chartBackStyleFontColor);
 		}
 
 		// abscisses et ordonnées -------------------------------------------------------
@@ -395,39 +411,39 @@ class SVGgraphPREFAB_graphBarres12m {
 		foreach ($ordTAB as $uneOrd) {
 			$nombreOrd = $uneOrd * (10 ** $ordonneeMax[1]);
 			$nombreOrdY = (int) ($nombreOrd * $ratio);
-			$this->enfants_graph12m_cumul[] = new b\bls_svg_text(currency_format($nombreOrd, 0, '', $this->localisation), $largZoneordone - 4, $hautZoneBarre - $nombreOrdY + 4, $fontSize, 'end');
-			$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneordone - 2, $hautZoneBarre - $nombreOrdY, $largeurReduite, $hautZoneBarre - $nombreOrdY, 'rgb(150,150,150)', 1, 'butt');
+			$this->enfants_graph12m_cumul[] = new b\bls_svg_text(currency_format($nombreOrd, 0, '', $this->localisation), $largZoneOrdonnees - 4, $hautZoneBarre - $nombreOrdY + 4, $fontSize, 'end', $this->chartBackStyleFontColor);
+			$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneOrdonnees - 2, $hautZoneBarre - $nombreOrdY, $largeurReduite, $hautZoneBarre - $nombreOrdY, 'rgb(150,150,150)', 1, 'butt');
 		}
 
-		$this->enfants_graph12m_cumul[] = new b\bls_svg_text(currency_format(0, 0, '', $this->localisation), $largZoneordone - 4, $hautZoneBarre + 4, $fontSize, 'end');
+		$this->enfants_graph12m_cumul[] = new b\bls_svg_text(currency_format(0, 0, '', $this->localisation), $largZoneOrdonnees - 4, $hautZoneBarre + 4, $fontSize, 'end', $this->chartBackStyleFontColor);
 
 		// barre vertcale intermédiaires
 		for ($index = 1; $index <= 12; $index++) {
-			$x = $largZoneordone + ($largeurCol * $index) + ($largZoneMois / 3) + (($index - 1) * $this->nbSeries * $largeurCol);
+			$x = $largZoneOrdonnees + ($largeurCol * $index) + ($largZoneMois / 3) + (($index - 1) * $this->nbSeries * $largeurCol);
 			$this->enfants_graph12m_cumul[] = new b\bls_svg_line($x, 0, $x, $hautZoneBarre, 'rgb(150,150,150)', 1, 'butt');
 		}
 
 		// Création des lignes
 		foreach ($this->donnees as $cle => $uneAnnee) {
-			$couleur = $this->couleurs[$cle];
+			$couleur = COLORSET[$cle]['back'];
 			$ligne = array();
-			$ligne[] = array($largZoneordone, $hautZoneBarre);
+			$ligne[] = array($largZoneOrdonnees, $hautZoneBarre);
 			for ($index = 1; $index <= 12; $index++) {
 
-				$x = $largZoneordone + ($largeurCol * $index) + ($largZoneMois / 3) + (($index - 1) * $this->nbSeries * $largeurCol);
+				$x = $largZoneOrdonnees + ($largeurCol * $index) + ($largZoneMois / 3) + (($index - 1) * $this->nbSeries * $largeurCol);
 				$height = (int) ($uneAnnee['moisCumul'][$index] * $ratio);
 				$y = $hautZoneBarre - $height;
 				$ligne[] = array($x, $y);
 			}
-			$this->enfants_graph12m_cumul[] = new b\bls_svg_path($ligne, $couleur, 3);
+			$this->enfants_graph12m_cumul[] = new b\bls_svg_pathLine($ligne, $couleur, 3);
 		}
 
 		// abscisses et ordonnées -------------------------------------------------------
 		// barres
 		// ordonnées
-		$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneordone, 0, $largZoneordone, $this->height, 'rgb(0,0,0)', 1, 'butt');
+		$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneOrdonnees, 0, $largZoneOrdonnees, $hautZoneBarre, $this->chartBackStyleFontColor, 1, 'butt');
 		// abscisses
-		$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneordone - 2, $hautZoneBarre, $largeurReduite, $hautZoneBarre, 'rgb(0,0,0)', 1, 'butt');
+		$this->enfants_graph12m_cumul[] = new b\bls_svg_line($largZoneOrdonnees - 2, $hautZoneBarre, $largeurReduite, $hautZoneBarre, $this->chartBackStyleFontColor, 1, 'butt');
 	}
 
 	/**
@@ -482,13 +498,13 @@ class SVGgraphPREFAB_graphBarres12m {
 		}
 
 		$divWell = new b\bls_div(NULL, array('class' => $this->styleCSSprefix . 'well ' . $this->styleCSSprefix . 'well-sm SVGgraphPREFAB_graphBarres12m'));
-		$titreGraphe = new b\bls_h(2, $this->titreGraph . $titreTexteCumul . ' (' . $this->unite . ')');
+		$titreGraphe = new b\bls_h(3, $this->titreGraph . $titreTexteCumul . ' (' . $this->unite . ')');
 		$divWell->add_enfants($titreGraphe);
 
 		if ($with_graph) {
 			$legende = new b\bls_p(NULL, array('class' => 'graphBarres12m-legende'));
 			foreach ($this->donnees as $cle => $uneAnnee) {
-				$legende->add_enfants(new b\bls_span($uneAnnee['annee'], array('class' => $this->styleCSSprefix . 'label', 'style' => 'background-color: ' . $this->couleurs[$cle] . ';')));
+				$legende->add_enfants(new b\bls_span($uneAnnee['annee'], array('class' => $this->styleCSSprefix . 'label', 'style' => 'background-color: ' . COLORSET[$cle]['back'] . '; color: ' . COLORSET[$cle]['font'] . ';')));
 			}
 
 			$leGraphAttr = array();
@@ -505,7 +521,7 @@ class SVGgraphPREFAB_graphBarres12m {
 				$contenuDuGraph = $this->enfants_graph12m_cumul;
 			}
 
-			$leGraph = new b\bls_svg($prefixIDgraph . $this->nomGraph, "0 -20 {$this->width} {$this->height}", 'graphBarres12m-svg', $contenuDuGraph, $leGraphAttr);
+			$leGraph = new b\bls_svg($prefixIDgraph . $this->nomGraph, "0 -20 {$this->width} {$this->height}", 'svg-' . $this->chartBackStyleCSSsuffix, $contenuDuGraph, $leGraphAttr);
 			if ($caption_position_top) {
 				$divWell->add_enfants(array($legende, $leGraph));
 			}

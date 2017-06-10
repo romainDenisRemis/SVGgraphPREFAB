@@ -25,7 +25,7 @@
  * @author Romain DENIS-REMIS <romain at denis-remis.fr>
  * @copyright (c) 2017, Romain DENIS-REMIS
  * @license http://www.gnu.org/licenses/ GNU Lesser General Public License 3
- * @version 0.1.0
+ * @version 0.2.0
  * @package balisePHPlib\html5
  */
 

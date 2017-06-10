@@ -18,7 +18,7 @@
  */
 
 /**
- * @version 0.1.0
+ * @version 0.2.0
  */
 
 
@@ -29,11 +29,12 @@
  * @param {number} ty - Position de l'ordonnée du texte.
  * @param {string} mouseOverText - Texte affiché.
  * @param {string} couleur - Couleur du texte affiché.
+ * @param {string} backCouleur - Couleur de fond du cadre.
  * @param {number} tbx - Position de l'abscisse du cadre derrière le texte.
  * @param {number} tby - Position de l'ordonnée du cadre derrière le texte.
  * @param {string} finId - Suffix du ID.
  */
-function SGP_gb12m_showTooltip(tx, ty, mouseOverText, couleur, tbx, tby, finId) {
+function SGP_gb12m_showTooltip(tx, ty, mouseOverText, couleur, backCouleur, tbx, tby, finId) {
 	var sgp_gp12m_tooltip_text = document.getElementById("tooltip" + finId);
 	sgp_gp12m_tooltip_text.setAttribute("x", tx);
 	sgp_gp12m_tooltip_text.setAttribute("y", ty);
@@ -44,6 +45,7 @@ function SGP_gb12m_showTooltip(tx, ty, mouseOverText, couleur, tbx, tby, finId) 
 	var sgp_gp12m_tooltip_box = document.getElementById("tooltipbox" + finId);
 	sgp_gp12m_tooltip_box.setAttribute("x", tbx);
 	sgp_gp12m_tooltip_box.setAttribute("y", tby);
+	sgp_gp12m_tooltip_box.setAttribute("fill", backCouleur);
 	sgp_gp12m_tooltip_box.setAttribute("visibility", "visible");
 	
 //	jQuery version.
@@ -60,6 +62,60 @@ function SGP_gb12m_HideTooltip(finId) {
 	sgp_gp12m_tooltip_text.setAttribute("visibility", "hidden");
 	var sgp_gp12m_tooltip_box = document.getElementById("tooltipbox" + finId);
 	sgp_gp12m_tooltip_box.setAttribute("visibility", "hidden");
+	
+//	jQuery version.
+//	$("#tooltip" + finId).attr({visibility: "hidden"});
+//	$("#tooltipbox" + finId).attr({visibility: "hidden"});
+}
+
+
+/**
+ * Rend visible l'étiquette affichant la valeur d'une barre du graphique d'un graphique SGP_gpie.
+ * Positionne, change la valeur du texte et rend visible l'étiquette.
+ * @param {string} mouseOverText - Texte affiché.
+ * @param {string} couleur - Couleur du texte affiché.
+ * @param {string} backCouleur - Couleur de fond du cadre.
+ * @param {string} finId - Suffix du ID.
+ */
+function SGP_gpie_showTooltip(mouseOverText, mouseOverText2, couleur, backCouleur, finId) {
+	var sgp_gp12m_tooltip_text = document.getElementById("tooltip" + finId);
+	sgp_gp12m_tooltip_text.setAttribute("fill", couleur);
+	sgp_gp12m_tooltip_text.textContent = mouseOverText;
+	sgp_gp12m_tooltip_text.setAttribute("visibility", "visible");
+	
+	var sgp_gp12m_tooltip_box = document.getElementById("tooltipbox" + finId);
+	sgp_gp12m_tooltip_box.setAttribute("fill", backCouleur);
+	sgp_gp12m_tooltip_box.setAttribute("visibility", "visible");
+	
+	// Affichage des pourcents
+	var sgp_gp12m_ptooltip_text = document.getElementById("ptooltip" + finId);
+	sgp_gp12m_ptooltip_text.setAttribute("fill", couleur);
+	sgp_gp12m_ptooltip_text.textContent = mouseOverText2;
+	sgp_gp12m_ptooltip_text.setAttribute("visibility", "visible");
+	
+	var sgp_gp12m_ptooltip_box = document.getElementById("ptooltipbox" + finId);
+	sgp_gp12m_ptooltip_box.setAttribute("fill", backCouleur);
+	sgp_gp12m_ptooltip_box.setAttribute("visibility", "visible");
+	
+//	jQuery version.
+//	$("#tooltip" + finId).attr({x: tx, y: ty, fill: couleur, visibility: "visible"}).text(mouseOverText);
+//	$("#tooltipbox" + finId).attr({x: tbx, y: tby, visibility: "visible"});
+}
+
+/**
+ * Rend invisible l'étiquette affichant la valeur d'une barre du graphique SGP_gpie.
+ * @param {string} finId - Suffix du ID.
+ */
+function SGP_gpie_hideTooltip(finId) {
+	var sgp_gp12m_tooltip_text = document.getElementById("tooltip" + finId);
+	sgp_gp12m_tooltip_text.setAttribute("visibility", "hidden");
+	var sgp_gp12m_tooltip_box = document.getElementById("tooltipbox" + finId);
+	sgp_gp12m_tooltip_box.setAttribute("visibility", "hidden");
+	
+	var sgp_gp12m_ptooltip_text = document.getElementById("ptooltip" + finId);
+	sgp_gp12m_ptooltip_text.setAttribute("visibility", "hidden");
+	var sgp_gp12m_ptooltip_box = document.getElementById("ptooltipbox" + finId);
+	sgp_gp12m_ptooltip_box.setAttribute("visibility", "hidden");
 	
 //	jQuery version.
 //	$("#tooltip" + finId).attr({visibility: "hidden"});

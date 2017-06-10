@@ -26,17 +26,43 @@
 @import "balisePHPlib/balisePHPlib_html5.css";
 
 /* GENERAL styles */
+
+div.SVGgraphPREFAB_graphBarres12m h3:first-child, 
+div.SVGgraphPREFAB_graphPie h3:first-child
+{
+	margin-top: 0.2em;
+}
+
 div.SVGgraphPREFAB_graphBarres12m p.graphBarres12m-legende {
 	font-size: 1.5em;
+	line-height: 1.8em;
 }
+div.SVGgraphPREFAB_graphPie p.graphPie-legende {
+	font-size: 1.1em;
+	line-height: 1.6em;
+}
+
 div.SVGgraphPREFAB_graphBarres12m p.graphBarres12m-legende span {
-	margin-right: 2em;
+	margin-right: 1.4em;
 }
-div.SVGgraphPREFAB_graphBarres12m svg.graphBarres12m-svg {
+div.SVGgraphPREFAB_graphPie p.graphPie-legende span {
+	margin-right: 1em;
+}
+div.SVGgraphPREFAB_graphPie p.graphPie-legende span.label {
+	font-weight: normal;
+}
+div.SVGgraphPREFAB_graphPie svg.svg-clear,
+div.SVGgraphPREFAB_graphBarres12m svg.svg-clear {
 	width: 100%;
 	background-color: rgb(250,250,255);
 	border: solid 2px rgb(0,0,0);
 	border-radius: 4px;
+}
+
+div.SVGgraphPREFAB_graphPie svg.svg-dark,
+div.SVGgraphPREFAB_graphBarres12m svg.svg-dark {
+	width: 100%;
+	background-color: transparent;
 }
 
 /* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
