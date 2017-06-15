@@ -115,7 +115,7 @@ class attribut {
 			$this->attribut_valeur = $valeur;
 		}
 		else {
-			trigger_error('tentative d\'attribuer une valeur à un attribut qui n\'est pas une valeur de type string.', E_USER_NOTICE);
+			trigger_error('tentative d\'attribuer une valeur à un attribut qui n\'est pas une valeur de type string.', E_USER_WARNING);
 		}
 	}
 
@@ -214,7 +214,7 @@ class balise {
 			$this->liste_attributs[$nom] = new attribut($nom, $valeur, $this->isXML);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un attribut incorrect à une balise', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un attribut incorrect à une balise', E_USER_WARNING);
 		}
 	}
 
@@ -240,27 +240,40 @@ class balise {
 	 * 
 	 * @param object|string|int|float $enfant
 	 */
-	protected function add_enfant($enfant) {
+	protected function add_enfant($enfant, $push = TRUE) {
 		if ($this->baliseFermeture) {
 			if (!is_null($enfant)) {
+				$typeEnfant = NULL;
 				if (is_object($enfant) && ($enfant instanceof balise)) {
-					$this->liste_enfants[] = array(TRUE, $enfant);
+					$typeEnfant = TRUE;
+//					$this->liste_enfants[] = array(TRUE, $enfant);
 				}
 				elseif (is_string($enfant) || is_numeric($enfant)) {
+					$typeEnfant = FALSE;
 					if ($this->isXML) {
-						$this->liste_enfants[] = array(FALSE, htmlspecialchars($enfant, ENT_QUOTES | ENT_XML1));
+						$enfant = htmlspecialchars($enfant, ENT_QUOTES | ENT_XML1);
+//						$this->liste_enfants[] = array(FALSE, htmlspecialchars($enfant, ENT_QUOTES | ENT_XML1));
 					}
 					else {
-						$this->liste_enfants[] = array(FALSE, htmlspecialchars($enfant, ENT_QUOTES | ENT_HTML5));
+						$enfant = htmlspecialchars($enfant, ENT_QUOTES | ENT_HTML5);
+//						$this->liste_enfants[] = array(FALSE, htmlspecialchars($enfant, ENT_QUOTES | ENT_HTML5));
 					}
 				}
 				else {
-					trigger_error('Tentative d\'ajouter un enfant de type incorrect à une balise  ', E_USER_NOTICE);
+					trigger_error('Tentative d\'ajouter un enfant de type incorrect à une balise  ', E_USER_WARNING);
+				}
+				if($typeEnfant !== NULL){
+					if ($push) {
+						$this->liste_enfants[] = array($typeEnfant, $enfant);
+					}
+					else {
+						array_unshift($this->liste_enfants, array($typeEnfant, $enfant));
+					}
 				}
 			}
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise sans fermeture (type br, hr ...) ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise sans fermeture (type br, hr ...) ', E_USER_WARNING);
 		}
 	}
 
@@ -269,19 +282,19 @@ class balise {
 	 * 
 	 * @param mixed $contenu
 	 */
-	public function add_enfants($contenu) {
+	public function add_enfants($contenu, $push = TRUE) {
 		if ($this->baliseFermeture) {
 			if (is_array($contenu)) {
 				foreach ($contenu as $value) {
-					$this->add_enfant($value);
+					$this->add_enfant($value, $push);
 				}
 			}
 			else {
-				$this->add_enfant($contenu);
+				$this->add_enfant($contenu, $push);
 			}
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise sans fermeture (type br, hr ...) ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise sans fermeture (type br, hr ...) ', E_USER_WARNING);
 		}
 	}
 

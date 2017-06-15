@@ -34,6 +34,392 @@ namespace balisePHPlib;
 require_once(__DIR__ . '/classe_balise.php');
 
 /**
+ * Constante liste des types possibles pour les balises input.
+ */
+const HTML_INPUT_TYPE = array('text', 'password', 'checkbox', 'radio', 'submit', 'reset', 'file', 'hidden', 'image', 'button', 'date', 'datetime', 'datetime-local', 'email', 'month', 'number', 'range', 'tel', 'time', 'url', 'week', 'color', 'search');
+
+/**
+ * Définie une balise HTML <a>.
+ * @package balisePHPlib\html5
+ */
+class bls_a extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $href 
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($href = '', $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		$attributs['href'] = strval($href);
+		parent::__construct('a', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <abbr>.
+ * @package balisePHPlib\html5
+ */
+class bls_abbr extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $texte 
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($texte, $attributs = NULL) {
+		if (!is_string($texte)) {
+			trigger_error('Une balise abbr ne peut que contenir du texte', E_USER_NOTICE);
+		}
+		parent::__construct('abbr', TRUE, $texte, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <address>.
+ * @package balisePHPlib\html5
+ */
+class bls_address extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('address', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <audio>.
+ * @package balisePHPlib\html5
+ */
+class bls_audio extends balise {
+
+	/**
+	 * Constructeur.
+	 * 
+	 * @param string $src
+	 * @param bool $autoplay
+	 * @param bool $controls
+	 * @param bool $loop
+	 * @param bool $autobuffer
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($src, $autoplay = FALSE, $controls = TRUE, $loop = FALSE, $autobuffer = FALSE, $contenu = NULL, $attributs = NULL) {
+
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		$attributs['src'] = strval($src);
+
+		if ($autoplay) {
+			$attributs['autoplay'] = 'autoplay';
+		}
+		if ($controls) {
+			$attributs['controls'] = 'controls';
+		}
+		if ($loop) {
+			$attributs['loop'] = 'loop';
+		}
+		if ($autobuffer) {
+			$attributs['autobuffer'] = 'autobuffer';
+		}
+
+		parent::__construct('audio', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <b>.
+ * @package balisePHPlib\html5
+ */
+class bls_b extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('b', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <base>.
+ * @package balisePHPlib\html5
+ */
+class bls_base extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($attributs = NULL) {
+		parent::__construct('base', FALSE, NULL, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <blockquote>.
+ * @package balisePHPlib\html5
+ */
+class bls_blockquote extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('blockquote', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <br>.
+ * @package balisePHPlib\html5
+ */
+class bls_br extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($attributs = NULL) {
+		parent::__construct('br', FALSE, NULL, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <button>.
+ * @package balisePHPlib\html5
+ */
+class bls_button extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('button', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <canvas>.
+ * @package balisePHPlib\html5
+ */
+class bls_canvas extends balise {
+
+	/**
+	 * Constructeur.
+	 * 
+	 * @param int $width
+	 * @param int $height
+	 * @param string $id
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($width, $height, $id = NULL, $contenu = NULL, $attributs = NULL) {
+
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_numeric($width)) {
+			trigger_error('L\'attribut width attend un nombre.', E_USER_WARNING);
+		}
+		else {
+			$attributs['width'] = (int) $width;
+		}
+
+		if (!is_numeric($height)) {
+			trigger_error('L\'attribut height attend un nombre.', E_USER_WARNING);
+		}
+		else {
+			$attributs['height'] = (int) $height;
+		}
+
+		if (!is_null($id)) {
+			if (is_string($id)) {
+				$attributs['id'] = $id;
+			}
+			else {
+				trigger_error('L\'attribut id attend un string.', E_USER_WARNING);
+			}
+		}
+
+		parent::__construct('canvas', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <cite>.
+ * @package balisePHPlib\html5
+ */
+class bls_cite extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('cite', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <code>.
+ * @package balisePHPlib\html5
+ */
+class bls_code extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('code', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <code> pour PRISM.
+ * Spécialement pour interagir avec [PRISM](http://prismjs.com) vous passez juste le nom du langage.
+ * Ici pour la liste et comment doivent être nommés les langages [liste langages](http://prismjs.com/#languages-list).
+ * @package balisePHPlib\html5
+ */
+class bls_codePrism extends bls_code {
+
+	/**
+	 * Constructeur.
+	 * @param string $lang Nom du langage ('javascript' ou 'css' ...)
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($lang, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($lang)) {
+			trigger_error('Le paramètre $lang attend un string.', E_USER_WARNING);
+		}
+
+		$prismClass = 'language-' . $lang;
+
+		if (isset($attributs['class'])) {
+			$attributs['class'] .= ' ' . $prismClass;
+		}
+		else {
+			$attributs['class'] = $prismClass;
+		}
+		parent::__construct($contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <details>.
+ * @package balisePHPlib\html5
+ */
+class bls_details extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param bool $open Par défaut FALSE
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($open = FALSE, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+		$open = (bool) $open;
+		if ($open) {
+			$attributs['open'] = 'open';
+		}
+		parent::__construct('details', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <summary>.
+ * @package balisePHPlib\html5
+ */
+class bls_summary extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('summary', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <em>.
+ * @package balisePHPlib\html5
+ */
+class bls_em extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('em', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <strong>.
+ * @package balisePHPlib\html5
+ */
+class bls_strong extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('strong', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
  * Définie une balise HTML <p>.
  * @package balisePHPlib\html5
  */
@@ -107,17 +493,983 @@ class bls_div extends balise {
 }
 
 /**
- * Définie une balise HTML <br>.
+ * Définie une balise HTML <hr>.
  * @package balisePHPlib\html5
  */
-class bls_br extends balise {
+class bls_hr extends balise {
 
 	/**
 	 * Constructeur.
 	 * @param array $attributs NULL par défaut
 	 */
 	public function __construct($attributs = NULL) {
-		parent::__construct('br', FALSE, NULL, $attributs);
+		parent::__construct('hr', FALSE, NULL, $attributs);
+	}
+
+}
+
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  CLASSES CONCERNANT TOUTES LES BALISES DU SQUELETTE DE BASE ET DU HEAD
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+/**
+ * Définie une balise HTML <html>.
+ * @package balisePHPlib\html5
+ */
+class bls_html extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('html', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <head>.
+ * @package balisePHPlib\html5
+ */
+class bls_head extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('head', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <body>.
+ * @package balisePHPlib\html5
+ */
+class bls_body extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('body', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <link>.
+ * @package balisePHPlib\html5
+ */
+class bls_link extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($attributs = NULL) {
+		parent::__construct('link', FALSE, NULL, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <link> pour favicon.
+ * @package balisePHPlib\html5
+ */
+class bls_linkFavicon extends bls_link {
+
+	/**
+	 * Constructeur.
+	 * @param string $iconPath Chemin du fichier exp: 'favicon.ico' ou 'img/favicon.png'
+	 */
+	public function __construct($iconPath) {
+		if (!is_string($iconPath)) {
+			trigger_error('Le paramètre $iconPath attend un string.', E_USER_WARNING);
+		}
+		$extension = substr($iconPath, -3);
+		$type = 'image/';
+		switch ($extension) {
+			case 'ico':
+				$type .= 'x-icon';
+				break;
+			case 'jpg':
+				$type .= 'jpeg';
+				break;
+			case 'png':
+			case 'jpeg':
+			case 'gif':
+				$type .= $extension;
+				break;
+			default:
+				break;
+		}
+		$attributs = array();
+		$attributs['rel'] = 'icon';
+		$attributs['type'] = $type;
+		$attributs['href'] = $iconPath;
+
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <link> pour CSS.
+ * @package balisePHPlib\html5
+ */
+class bls_linkCSS extends bls_link {
+
+	/**
+	 * Constructeur.
+	 * @param string $filePath Chemin du fichier exp: 'css/style.css'
+	 */
+	public function __construct($filePath) {
+		if (!is_string($filePath)) {
+			trigger_error('Le paramètre $filePath attend un string.', E_USER_WARNING);
+		}
+		$attributs = array();
+		$attributs['rel'] = 'stylesheet';
+		$attributs['type'] = 'text/css';
+		$attributs['href'] = $filePath;
+
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <title>.
+ * @package balisePHPlib\html5
+ */
+class bls_title extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $title 
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($title, $attributs = NULL) {
+		if (!is_string($title)) {
+			trigger_error('Le paramètre $title attend un string.', E_USER_WARNING);
+		}
+		parent::__construct('title', TRUE, $title, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta>.
+ * @package balisePHPlib\html5
+ */
+class bls_meta extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($attributs = NULL) {
+		parent::__construct('meta', FALSE, NULL, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta> charset.
+ * @package balisePHPlib\html5
+ */
+class bls_metaCharset extends bls_meta {
+
+	/**
+	 * Constructeur.
+	 * @param string $charset 'UTF-8' par défaut
+	 */
+	public function __construct($charset = 'UTF-8') {
+		if (!is_string($charset)) {
+			trigger_error('Le paramètre $charset attend un string.', E_USER_WARNING);
+		}
+		$attributs['charset'] = $charset;
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta> viewport.
+ * @package balisePHPlib\html5
+ */
+class bls_metaViewport extends bls_meta {
+
+	/**
+	 * Constructeur.
+	 * @param string $viewport 'width=device-width, initial-scale=1.0' par défaut
+	 */
+	public function __construct($viewport = 'width=device-width, initial-scale=1.0') {
+		if (!is_string($viewport)) {
+			trigger_error('Le paramètre $viewport attend un string.', E_USER_WARNING);
+		}
+		$attributs['name'] = 'viewport';
+		$attributs['content'] = $viewport;
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta> author.
+ * @package balisePHPlib\html5
+ */
+class bls_metaAuthor extends bls_meta {
+
+	/**
+	 * Constructeur.
+	 * @param string $author 
+	 */
+	public function __construct($author) {
+		if (!is_string($author)) {
+			trigger_error('Le paramètre $author attend un string.', E_USER_WARNING);
+		}
+		$attributs['name'] = 'author';
+		$attributs['content'] = $author;
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta> description.
+ * @package balisePHPlib\html5
+ */
+class bls_metaDescription extends bls_meta {
+
+	/**
+	 * Constructeur.
+	 * @param string $description 
+	 */
+	public function __construct($description) {
+		if (!is_string($description)) {
+			trigger_error('Le paramètre $description attend un string.', E_USER_WARNING);
+		}
+		$attributs['name'] = 'description';
+		$attributs['content'] = $description;
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <meta> keywords.
+ * @package balisePHPlib\html5
+ */
+class bls_metaKeywords extends bls_meta {
+
+	/**
+	 * Constructeur.
+	 * @param string $keywords 
+	 */
+	public function __construct($keywords) {
+		if (!is_string($keywords)) {
+			trigger_error('Le paramètre $keywords attend un string.', E_USER_WARNING);
+		}
+		$attributs['name'] = 'keywords';
+		$attributs['content'] = $keywords;
+		parent::__construct($attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <script>.
+ * @package balisePHPlib\html5
+ */
+class bls_script extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('script', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  CLASSES CONCERNANT TOUTES LES BALISES EN RAPPORT AVEC LA STRUCTURE GENERALE DE LA PAGE
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+/**
+ * Définie une balise HTML <nav>.
+ * @package balisePHPlib\html5
+ */
+class bls_nav extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('nav', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <section>.
+ * @package balisePHPlib\html5
+ */
+class bls_section extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('section', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <header>.
+ * @package balisePHPlib\html5
+ */
+class bls_header extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('header', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <footer>.
+ * @package balisePHPlib\html5
+ */
+class bls_footer extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('footer', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <article>.
+ * @package balisePHPlib\html5
+ */
+class bls_article extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('article', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <aside>.
+ * @package balisePHPlib\html5
+ */
+class bls_aside extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('aside', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  CLASSES CONCERNANT TOUTES LES BALISES EN RAPPORT AVEC LES LISTES
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+/**
+ * Définie une balise HTML <li>.
+ * @package balisePHPlib\html5
+ */
+class bls_li extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('li', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <ul>.
+ * @package balisePHPlib\html5
+ */
+class bls_ul extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('ul', TRUE, $contenu, $attributs);
+	}
+
+	/**
+	 * Ajouter un enfant.
+	 * redéfinition de la fonction de la classe mère.
+	 * Seul un objet de la classe **bls_li** sera accepté.
+	 * 
+	 * @param object $enfant
+	 */
+	protected function add_enfant($enfant, $push = TRUE) {
+		if (is_object($enfant) && ($enfant instanceof bls_li)) {
+			parent::add_enfant($enfant, $push);
+		}
+		else {
+			trigger_error('Tentative d\'ajouter un enfant à une balise ul qui n\'est pas une balise li ', E_USER_WARNING);
+		}
+	}
+
+}
+
+/**
+ * Définie une balise HTML <ol>.
+ * @package balisePHPlib\html5
+ */
+class bls_ol extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('ol', TRUE, $contenu, $attributs);
+	}
+
+	/**
+	 * Ajouter un enfant.
+	 * redéfinition de la fonction de la classe mère.
+	 * Seul un objet de la classe **bls_li** sera accepté.
+	 * 
+	 * @param object $enfant
+	 */
+	protected function add_enfant($enfant, $push = TRUE) {
+		if (is_object($enfant) && ($enfant instanceof bls_li)) {
+			parent::add_enfant($enfant, $push);
+		}
+		else {
+			trigger_error('Tentative d\'ajouter un enfant à une balise ol qui n\'est pas une balise li ', E_USER_WARNING);
+		}
+	}
+
+}
+
+/**
+ * Définie une balise HTML <dl>.
+ * @package balisePHPlib\html5
+ */
+class bls_dl extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('dl', TRUE, $contenu, $attributs);
+	}
+
+	/**
+	 * Ajouter un enfant.
+	 * redéfinition de la fonction de la classe mère.
+	 * Seul un objet de la classe **bls_dt** ou **bls_dd** sera accepté.
+	 * 
+	 * @param object $enfant
+	 */
+	protected function add_enfant($enfant, $push = TRUE) {
+		if (is_object($enfant) && ($enfant instanceof bls_dt || $enfant instanceof bls_dd)) {
+			parent::add_enfant($enfant, $push);
+		}
+		else {
+			trigger_error('Tentative d\'ajouter un enfant à une balise dl qui n\'est pas une balise dt ou dd ', E_USER_WARNING);
+		}
+	}
+
+}
+
+/**
+ * Définie une balise HTML <dt>.
+ * @package balisePHPlib\html5
+ */
+class bls_dt extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('dt', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <dd>.
+ * @package balisePHPlib\html5
+ */
+class bls_dd extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('dd', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/* xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  CLASSES CONCERNANT TOUTES LES BALISES EN RAPPORT AVEC LES FORMULAIRES
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx */
+
+/**
+ * Définie une balise HTML <form>.
+ * @package balisePHPlib\html5
+ */
+class bls_form extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $action
+	 * @param string $method Par défaut 'post'
+	 * @param string $enctype Par défaut 'multipart/form-data'
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($action, $method = 'post', $enctype = 'multipart/form-data', $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($action)) {
+			trigger_error('Le paramètre $action attend un string.', E_USER_WARNING);
+		}
+		else {
+			$attributs['action'] = $action;
+		}
+
+		if (!is_string($method)) {
+			trigger_error('Le paramètre $method attend un string.', E_USER_WARNING);
+		}
+		else {
+			if (in_array($method, array('post', 'get'))) {
+				$attributs['method'] = $method;
+			}
+			else {
+				trigger_error('Le paramètre $method fournit est invalide.', E_USER_WARNING);
+			}
+		}
+
+		if (!is_string($enctype)) {
+			trigger_error('Le paramètre $enctype attend un string.', E_USER_WARNING);
+		}
+		else {
+			if (in_array($enctype, array('multipart/form-data', 'application/x-www-form-urlencoded', 'text/plain'))) {
+				$attributs['enctype'] = $enctype;
+			}
+			else {
+				trigger_error('Le paramètre $enctype fournit est invalide.', E_USER_WARNING);
+			}
+		}
+
+		parent::__construct('form', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <option>.
+ * @package balisePHPlib\html5
+ */
+class bls_option extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string|int|float $label
+	 * @param string|int|float $value Par défaut NULL
+	 * @param boll $selected Par défaut FALSE
+	 * @param array $attributs Par défaut NULL
+	 */
+	public function __construct($label, $value = NULL, $selected = FALSE, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (is_string($label) || is_numeric($label)) {
+			$label = strval($label);
+			if (is_null($value)) {
+				$value = $label;
+			}
+			$attributs['label'] = $label;
+		}
+		else {
+			trigger_error('Le paramètre label attend un string ou un nombre.', E_USER_WARNING);
+		}
+
+		if (is_string($value) || is_numeric($value)) {
+			$value = strval($value);
+			$attributs['value'] = $value;
+		}
+		else {
+			trigger_error('Le paramètre value attend un string ou un nombre.', E_USER_WARNING);
+		}
+
+		$selected = (bool) $selected;
+		if ($selected) {
+			$attributs['selected'] = 'selected';
+		}
+
+		parent::__construct('option', TRUE, $label, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <select>.
+ * @package balisePHPlib\html5
+ */
+class bls_select extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $name Attribut name (donné à l'attribut id aussi)
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($name, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($name)) {
+			trigger_error('Le paramètre $name attend un string.', E_USER_WARNING);
+		}
+		else {
+			$attributs['name'] = $name;
+			$attributs['id'] = $name;
+		}
+		parent::__construct('select', TRUE, $contenu, $attributs);
+	}
+
+	/**
+	 * Ajouter un enfant.
+	 * redéfinition de la fonction de la classe mère.
+	 * Seul un objet de la classe **bls_option** sera accepté.
+	 * 
+	 * @param object $enfant
+	 */
+	protected function add_enfant($enfant, $push = TRUE) {
+		if (is_object($enfant) && ($enfant instanceof bls_option)) {
+			parent::add_enfant($enfant, $push);
+		}
+		else {
+			trigger_error('Tentative d\'ajouter un enfant à une balise select qui n\'est pas une balise option ', E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Ajouter une liste d'options d'un coup dans la balise datalist.
+	 * On passe un tableau associatif dans lequel les paires clés=>valeur seront respectivement utilisées pour les attributs 'value' et 'label' des balises options 
+	 * @param array $options un tableau associatif
+	 */
+	public function add_options(array $options, $valSelect = NULL) {
+		if (!is_null($valSelect) && (is_string($valSelect) || is_numeric($valSelect))) {
+			$valSelect = strval($valSelect);
+		}
+		elseif (!is_null($valSelect)) {
+			$valSelect = NULL;
+			trigger_error('Le paramètre $valSelect attend un string ou un nombre.', E_USER_NOTICE);
+		}
+
+		if (is_null($valSelect)) {
+			foreach ($options as $uneVal => $unLab) {
+				$this->add_enfants(new bls_option($unLab, $uneVal));
+			}
+		}
+		else {
+			foreach ($options as $uneVal => $unLab) {
+				if ($uneVal == $valSelect) {
+					$this->add_enfants(new bls_option($unLab, $uneVal, TRUE));
+				}
+				else {
+					$this->add_enfants(new bls_option($unLab, $uneVal));
+				}
+			}
+		}
+	}
+
+}
+
+/**
+ * Définie une balise HTML <datalist>.
+ * @package balisePHPlib\html5
+ */
+class bls_datalist extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string id Attribut id
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($id, $listeOptions = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($id)) {
+			trigger_error('Le paramètre id attend un string.', E_USER_WARNING);
+		}
+		$attributs['id'] = $id;
+		parent::__construct('datalist', TRUE, NULL, $attributs);
+
+		if (!is_null($listeOptions) && is_array($listeOptions)) {
+			$this->add_options($listeOptions);
+		}
+	}
+
+	/**
+	 * Ajouter un enfant.
+	 * redéfinition de la fonction de la classe mère.
+	 * Seul un objet de la classe **bls_option** sera accepté.
+	 * 
+	 * @param object $enfant
+	 */
+	protected function add_enfant($enfant, $push = TRUE) {
+		if (is_object($enfant) && ($enfant instanceof bls_option)) {
+			parent::add_enfant($enfant, $push);
+		}
+		else {
+			trigger_error('Tentative d\'ajouter un enfant à une balise datalist qui n\'est pas une balise option ', E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Ajouter une liste d'options d'un coup dans la balise datalist.
+	 * @param array $options
+	 */
+	public function add_options(array $options) {
+		foreach ($options as $uneOption) {
+			$this->add_enfants(new bls_option($uneOption));
+		}
+	}
+
+}
+
+/**
+ * Définie une balise HTML <fieldset>.
+ * @package balisePHPlib\html5
+ */
+class bls_fieldset extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('fieldset', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <legend>.
+ * @package balisePHPlib\html5
+ */
+class bls_legend extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($contenu = NULL, $attributs = NULL) {
+		parent::__construct('legend', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <label>.
+ * @package balisePHPlib\html5
+ */
+class bls_label extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($for, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (is_string($for) || is_numeric($for)) {
+			$for = strval($for);
+			$attributs['for'] = $for;
+		}
+		else {
+			trigger_error('Le paramètre "for" attend un string ou un nombre.', E_USER_WARNING);
+		}
+
+		parent::__construct('label', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <textarea>.
+ * @package balisePHPlib\html5
+ */
+class bls_textarea extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $name pour les attributs 'name' et 'id'
+	 * @param bool $required Par défaut FALSE
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($name, $required = FALSE, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($name)) {
+			trigger_error('Le paramètre $name attend un string.', E_USER_WARNING);
+		}
+		else {
+			$attributs['name'] = $name;
+			$attributs['id'] = $name;
+		}
+
+		$required = (bool) $required;
+		if ($required) {
+			$attributs['required'] = 'required';
+		}
+		$attributs['rows'] = 5;
+		parent::__construct('textarea', TRUE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <input>.
+ * @package balisePHPlib\html5
+ */
+class bls_input extends balise {
+
+	/**
+	 * Constructeur.
+	 * @param string $name pour les attributs 'name' et 'id'
+	 * @param string $type Par défaut 'text'
+	 * @param bool $required Par défaut FALSE
+	 * @param mixed $contenu NULL par défaut
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($name, $type = 'text', $required = FALSE, $contenu = NULL, $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($name)) {
+			trigger_error('Le paramètre $name attend un string.', E_USER_WARNING);
+		}
+		else {
+			$attributs['name'] = $name;
+			$attributs['id'] = $name;
+		}
+
+		if (!is_string($type)) {
+			trigger_error('Le paramètre $type attend un string.', E_USER_WARNING);
+		}
+		else {
+			if (in_array($type, HTML_INPUT_TYPE)) {
+				$attributs['type'] = $type;
+			}
+			else {
+				trigger_error('Le paramètre $type fournit est invalide.', E_USER_WARNING);
+			}
+		}
+
+		$required = (bool) $required;
+		if ($required) {
+			$attributs['required'] = 'required';
+		}
+		parent::__construct('input', FALSE, $contenu, $attributs);
+	}
+
+}
+
+/**
+ * Définie une balise HTML <input> de type submit.
+ * @package balisePHPlib\html5
+ */
+class bls_inputSubmit extends bls_input {
+	/**
+	 * 
+	 * @param string $value Par défaut 'Valider'
+	 * @param string $name Par défaut 'inputSub'
+	 * @param array $attributs NULL par défaut
+	 */
+	public function __construct($value = "Valider", $name = 'inputSub', $attributs = NULL) {
+		if (is_null($attributs) || !is_array($attributs)) {
+			$attributs = array();
+		}
+
+		if (!is_string($value)) {
+			trigger_error('Le paramètre $value attend un string.', E_USER_WARNING);
+		}
+		else {
+			$attributs['value'] = $value;
+		}
+
+		parent::__construct($name, 'submit', FALSE, NULL, $attributs);
 	}
 
 }
@@ -298,12 +1650,12 @@ class bls_tr extends balise {
 	 * 
 	 * @param object $enfant
 	 */
-	protected function add_enfant($enfant) {
+	protected function add_enfant($enfant, $push = TRUE) {
 		if (is_object($enfant) && ($enfant instanceof bls_td || $enfant instanceof bls_th)) {
-			$this->liste_enfants[] = array(TRUE, $enfant);
+			parent::add_enfant($enfant, $push);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise tr qui n\'est pas une balise td ou th ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise tr qui n\'est pas une balise td ou th ', E_USER_WARNING);
 		}
 	}
 
@@ -331,12 +1683,12 @@ class bls_thead extends balise {
 	 * 
 	 * @param object $enfant
 	 */
-	protected function add_enfant($enfant) {
+	protected function add_enfant($enfant, $push = TRUE) {
 		if (is_object($enfant) && ($enfant instanceof bls_tr)) {
-			$this->liste_enfants[] = array(TRUE, $enfant);
+			parent::add_enfant($enfant, $push);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise thead qui n\'est pas une balise tr ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise thead qui n\'est pas une balise tr ', E_USER_WARNING);
 		}
 	}
 
@@ -364,12 +1716,12 @@ class bls_tfoot extends balise {
 	 * 
 	 * @param object $enfant
 	 */
-	protected function add_enfant($enfant) {
+	protected function add_enfant($enfant, $push = TRUE) {
 		if (is_object($enfant) && ($enfant instanceof bls_tr)) {
-			$this->liste_enfants[] = array(TRUE, $enfant);
+			parent::add_enfant($enfant, $push);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise tfoot qui n\'est pas une balise tr ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise tfoot qui n\'est pas une balise tr ', E_USER_WARNING);
 		}
 	}
 
@@ -397,12 +1749,12 @@ class bls_tbody extends balise {
 	 * 
 	 * @param object $enfant
 	 */
-	protected function add_enfant($enfant) {
+	protected function add_enfant($enfant, $push = TRUE) {
 		if (is_object($enfant) && ($enfant instanceof bls_tr)) {
-			$this->liste_enfants[] = array(TRUE, $enfant);
+			parent::add_enfant($enfant, $push);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise tbody qui n\'est pas une balise tr ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise tbody qui n\'est pas une balise tr ', E_USER_WARNING);
 		}
 	}
 
@@ -446,12 +1798,12 @@ class bls_colgroup extends balise {
 	 * 
 	 * @param object $enfant
 	 */
-	public function add_enfant($enfant) {
+	public function add_enfant($enfant, $push = TRUE) {
 		if (is_object($enfant) && ($enfant instanceof bls_col)) {
-			$this->liste_enfants[] = array(TRUE, $enfant);
+			parent::add_enfant($enfant, $push);
 		}
 		else {
-			trigger_error('Tentative d\'ajouter un enfant à une balise colgroup qui n\'est pas une balise col ', E_USER_NOTICE);
+			trigger_error('Tentative d\'ajouter un enfant à une balise colgroup qui n\'est pas une balise col ', E_USER_WARNING);
 		}
 	}
 
